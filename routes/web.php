@@ -20,19 +20,19 @@ Route::get('/', function () {
 
 // grouper les root :
 
-Route::prefix('/articles')->name('blog.')->group(function() {
+Route::prefix('/blog')->name('blog.')->group(function() {
     Route::get('/', function (Request $request) {
-        return [
-            'link' => \route('blog.show', ['slug' => 'article', 'id' =>  13])
-        ] ;
+        return \App\Models\Post::paginate(25) ;
+
     })->name('index');
 
     Route::get('/{slug}-{id}', function(string $slug, string $id, Request $request) {
-        return [
-            'slug' => $slug ,
-            'id'   => $id ,
-            'name' => $request->input('name')
-        ] ;
+        $posts = \App\Models\Post::findOrfail($id) ;
+
+        if($posts->slug !== $slug) {
+            return to_route('blog.show', ['slug' => $posts->slug, 'id' => $posts->id]) ;
+        }
+
     })->where([
         'slug' => '[a-z0-9\-]+',
         'id' => '[0-9]+' ,
