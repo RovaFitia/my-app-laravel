@@ -6,23 +6,28 @@ use App\Models\Post;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class BlogController extends Controller
 {
     //
-    public function index():Paginator
+    public function index():view
     {
-        return \App\Models\Post::paginate(25) ;
+        return view('blog.index', [
+            'posts' => Post::paginate(3)
+        ]) ;
     }
 
-    public function show(string $slug, string $id):RedirectResponse | Post
+    public function show(string $slug, string $id):RedirectResponse | view
     {
-        $posts = \App\Models\Post::findOrfail($id) ;
+        $posts = Post::findOrfail($id) ;
 
         if($posts->slug !== $slug) {
             return to_route('blog.show', ['slug' => $posts->slug, 'id' => $posts->id]) ;
         }
 
-        return $posts ;
+        return view('blog.show', [
+            'posts' => $posts
+        ]) ;
     }
 }
