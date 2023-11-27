@@ -33,5 +33,3 @@ Route::prefix('/blog')
         ])
             ->name('show');
     });
-
-
